@@ -5,6 +5,7 @@ using System.IdentityModel.Selectors;
 using System.IdentityModel.Tokens;
 using System.IO;
 using System.Linq;
+using System.Security;
 using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
@@ -50,10 +51,24 @@ namespace SecureTockenService.Client
             ValidateConfiguration();
             GenericXmlSecurityToken genericToken = RequestTrustToken(username, password, _tokenClientOptions.AudienceUri);
 
+            if(genericToken == null)
+                throw new SecurityException("Unable to Login");
+
             ClaimsPrincipal tokenClaimsPrincipal = ParseToken(genericToken);
+
+            if (tokenClaimsPrincipal == null)
+                throw new SecurityException("Unable to Login");
 
             SessionToken = new SessionSecurityToken(tokenClaimsPrincipal);
 
+            if (SessionToken == null)
+                throw new SecurityException("Unable to Login");
+
+        }
+
+        public void SignOut()
+        {
+            SessionToken = null;
         }
 
         private ClaimsPrincipal ParseToken(GenericXmlSecurityToken genericToken)
