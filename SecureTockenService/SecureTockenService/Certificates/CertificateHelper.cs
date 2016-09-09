@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SecureTockenService.Certificates
 {
@@ -21,9 +18,9 @@ namespace SecureTockenService.Certificates
                 certificates = store.Certificates;
                 var certs = certificates.OfType<X509Certificate2>().Where(x => x.SubjectName.Name.Equals(subjectDistinguishedName, StringComparison.OrdinalIgnoreCase)).ToList();
 
-                if(certs.Count < 1)
+                if (certs.Count < 1)
                     throw new SecurityException($"No certificate found for subject '{subjectDistinguishedName}'");
-                if(certs.Count > 1)
+                if (certs.Count > 1)
                     throw new SecurityException($"Multiple certificates found for subject '{subjectDistinguishedName}'");
 
                 return new X509Certificate2(certs[0]);

@@ -40,7 +40,7 @@ namespace SecureTockenService.Service
 
             //Getting the Certificate from the Certificate Store
             //which certificate to get is configured by the TokenServiceOptions
-            X509Certificate2 encryptingCertificate = CertificateHelper.GetCertificate(_tokenServiceOptions.CertificateStoreName,_tokenServiceOptions.CertificateStoreLocation,_tokenServiceOptions.CertificateName);
+            X509Certificate2 encryptingCertificate = CertificateHelper.GetCertificate(_tokenServiceOptions.CertificateStoreName, _tokenServiceOptions.CertificateStoreLocation, _tokenServiceOptions.CertificateSubject);
             var encryptingCredentials = new X509EncryptingCredentials(encryptingCertificate);
 
             //Setting the encryption credentials for our Scope

@@ -1,16 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Security.Cryptography.X509Certificates;
 
 namespace SecureTockenService.Service
 {
     public interface ITokenServiceOptions
     {
-        string CertificateName { get; }
+        #region Properties
+
+        string CertificateSubject { get; }
+        string CertificateIssuer { get; }
         StoreName CertificateStoreName { get; }
         StoreLocation CertificateStoreLocation { get; }
+
+        #endregion
     }
 }
