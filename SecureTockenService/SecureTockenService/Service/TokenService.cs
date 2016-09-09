@@ -19,9 +19,15 @@ namespace SecureTockenService.Service
 
         #region Constructors
 
-        public TokenService(SecurityTokenServiceConfiguration securityTokenServiceConfiguration, ITokenServiceOptions options)
+        public TokenService(SecurityTokenServiceConfiguration securityTokenServiceConfiguration)
             : base(securityTokenServiceConfiguration)
         {
+            var options = new TokenServiceOptions();
+            options.CertificateStoreName = StoreName.Root;
+            options.CertificateStoreLocation = StoreLocation.LocalMachine;
+            options.CertificateIssuer = "CN=SecureTokenServiceTest";
+            options.CertificateSubject = "CN=SecureTokenServiceTest";
+
             _tokenServiceOptions = options;
         }
 

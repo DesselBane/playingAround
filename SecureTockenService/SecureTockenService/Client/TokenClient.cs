@@ -10,7 +10,6 @@ using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using System.ServiceModel.Security;
-using System.Web;
 using System.Xml;
 using SecureTockenService.Certificates;
 
@@ -20,9 +19,10 @@ namespace SecureTockenService.Client
     {
         #region Vars
 
+        private TrustedIssuerNameRegistry _nameRegistry;
+
         private SessionSecurityToken _sessionToken;
         private ITokenClientOptions _tokenClientOptions;
-        private TrustedIssuerNameRegistry _nameRegistry;
 
         #endregion
 
@@ -51,7 +51,7 @@ namespace SecureTockenService.Client
             ValidateConfiguration();
             GenericXmlSecurityToken genericToken = RequestTrustToken(username, password, _tokenClientOptions.AudienceUri);
 
-            if(genericToken == null)
+            if (genericToken == null)
                 throw new SecurityException("Unable to Login");
 
             ClaimsPrincipal tokenClaimsPrincipal = ParseToken(genericToken);
@@ -63,7 +63,6 @@ namespace SecureTockenService.Client
 
             if (SessionToken == null)
                 throw new SecurityException("Unable to Login");
-
         }
 
         public void SignOut()
@@ -78,15 +77,15 @@ namespace SecureTockenService.Client
                 SecurityTokenHandlerCollection tokenHandlers = SecurityTokenHandlerCollection.CreateDefaultSecurityTokenHandlerCollection();
 
                 SecurityTokenHandlerConfiguration config = tokenHandlers.Configuration;
-                var securityTokens = new List<SecurityToken>()
+                var securityTokens = new List<SecurityToken>
                 {
-                    new X509SecurityToken(CertificateHelper.GetCertificate(_tokenClientOptions.StoreName,_tokenClientOptions.StoreLocation,_tokenClientOptions.SubjectDistinguishedName))
+                    new X509SecurityToken(CertificateHelper.GetCertificate(_tokenClientOptions.StoreName, _tokenClientOptions.StoreLocation, _tokenClientOptions.SubjectDistinguishedName))
                 };
 
                 config.ServiceTokenResolver = SecurityTokenResolver.CreateDefaultSecurityTokenResolver(securityTokens.AsReadOnly(), false);
                 config.CertificateValidator = X509CertificateValidator.PeerOrChainTrust;
-                
-                config.IssuerTokenResolver = new X509CertificateStoreTokenResolver(_tokenClientOptions.StoreName,_tokenClientOptions.StoreLocation);
+
+                config.IssuerTokenResolver = new X509CertificateStoreTokenResolver(_tokenClientOptions.StoreName, _tokenClientOptions.StoreLocation);
                 config.IssuerNameRegistry = _nameRegistry;
 
                 config.AudienceRestriction.AllowedAudienceUris.Add(_tokenClientOptions.AudienceUri);
@@ -99,7 +98,7 @@ namespace SecureTockenService.Client
 
         private void ValidateConfiguration()
         {
-            if (string.IsNullOrWhiteSpace(_tokenClientOptions?.AudienceUri))
+            if (_tokenClientOptions?.AudienceUri == null)
                 throw new ArgumentNullException(nameof(ITokenClientOptions.AudienceUri));
             if (string.IsNullOrWhiteSpace(_tokenClientOptions?.SigningCertificateName))
                 throw new ArgumentNullException(nameof(ITokenClientOptions.SigningCertificateName));
@@ -147,8 +146,8 @@ namespace SecureTockenService.Client
             var address = new EndpointAddress(_tokenClientOptions.TokenServiceUri, identity);
 
             var factory = new WSTrustChannelFactory(binding, address);
-            
-            if(factory.Credentials == null)
+
+            if (factory.Credentials == null)
                 throw new NullReferenceException(nameof(WSTrustChannelFactory.Credentials));
 
             factory.TrustVersion = TrustVersion.WSTrust13;
