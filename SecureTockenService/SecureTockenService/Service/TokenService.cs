@@ -1,9 +1,10 @@
 ﻿using System;
+using System.IdentityModel;
+using System.IdentityModel.Configuration;
+using System.IdentityModel.Protocols.WSTrust;
+using System.IdentityModel.Tokens;
+using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
-using Microsoft.IdentityModel.Claims;
-using Microsoft.IdentityModel.Configuration;
-using Microsoft.IdentityModel.Protocols.WSTrust;
-using Microsoft.IdentityModel.SecurityTokenService;
 using SecureTockenService.Certificates;
 
 namespace SecureTockenService.Service
@@ -28,7 +29,7 @@ namespace SecureTockenService.Service
 
         #region Overrides of SecurityTokenService
 
-        protected override Scope GetScope(IClaimsPrincipal principal, RequestSecurityToken request)
+        protected override Scope GetScope(ClaimsPrincipal principal, RequestSecurityToken request)
         {
             if (principal == null)
                 throw new ArgumentNullException(nameof(principal), "principal cannot be null.");
@@ -54,7 +55,7 @@ namespace SecureTockenService.Service
             return scope;
         }
 
-        protected override IClaimsIdentity GetOutputClaimsIdentity(IClaimsPrincipal principal, RequestSecurityToken request, Scope scope)
+        protected override ClaimsIdentity GetOutputClaimsIdentity(ClaimsPrincipal principal, RequestSecurityToken request, Scope scope)
         {
             if (principal == null)
             {
